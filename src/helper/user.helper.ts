@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import { environment } from '../config/environment';
 import { IUser } from '../database/models/interfaces/user.interfaces';
+import { UserService } from '../api/user/user.service';
 
 export class UserAuth {
   /**
@@ -49,4 +50,29 @@ export class UserAuth {
       { expiresIn: '30d' },
     );
   }
+
+  static async generateUsername(firstName: string, lastName: string) {
+    let user: IUser;
+    let username: string;
+    username = firstName.toLowerCase().concat('.', lastName.toLowerCase());
+
+    user = await UserService.findOne({ where: { username } });
+
+    while (user) {
+      username = user.username.concat(
+        '_',
+        `${this.generateRandomNumber(10000)}`,
+      );
+
+      user = await UserService.findOne({ where: { username } });
+    }
+
+    return username;
+  }
+
+  static generateRandomString = () =>
+    Math.random().toString(36).substring(2, 15);
+
+  static generateRandomNumber = (max: number = 1000) =>
+    Math.floor(Math.random() * max) + 1;
 }

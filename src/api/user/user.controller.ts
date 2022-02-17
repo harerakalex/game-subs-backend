@@ -53,4 +53,23 @@ export class UserController {
       return ResponseHandler.sendErrorResponse(res, error);
     }
   }
+
+  static async signup(req: Request, res: Response) {
+    try {
+      const { password, firstName, lastName } = req.body;
+      const hashedPassword = UserAuth.hashPassword(password);
+      req.body.password = hashedPassword;
+
+      const username = await UserAuth.generateUsername(firstName, lastName);
+      req.body.username = username;
+      console.log('usr===', username);
+      const user = await UserService.create(req.body);
+      const message = 'User has been successfull registered';
+      delete user.password;
+
+      return ResponseHandler.sendResponse(res, 201, true, message, user);
+    } catch (error) {
+      return ResponseHandler.sendErrorResponse(res, error);
+    }
+  }
 }
