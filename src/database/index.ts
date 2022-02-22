@@ -22,3 +22,4 @@ const databaseConnection = async () => {
 export { database, databaseConnection };
 
 export { User } from './models/User';
+export { Game } from './models/Game';

@@ -5,6 +5,9 @@ export interface IUser {
   username: string;
   email: string;
   password: string;
+  referral?: string;
+  subscription?: number;
+  balance?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

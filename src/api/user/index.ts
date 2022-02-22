@@ -13,3 +13,12 @@ userRouter.post(
   UserValidator.validateUserExists,
   UserController.signup,
 );
+
+userRouter.get('/:username', UserController.getProfile);
+
+userRouter.put(
+  '/deposit',
+  UserValidator.verifyToken,
+  UserValidator.validateSubscriptionBody,
+  UserController.subscription,
+);

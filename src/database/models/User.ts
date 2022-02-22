@@ -34,6 +34,15 @@ export class User extends Model<User> implements IUser {
   @Column
   password: string;
 
+  @Column
+  referral: string;
+
+  @Column
+  subscription: number;
+
+  @Column
+  balance: number;
+
   @CreatedAt
   @Column
   createdAt!: Date;

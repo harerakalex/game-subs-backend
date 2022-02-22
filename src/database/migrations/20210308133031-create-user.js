@@ -28,6 +28,20 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      referral: {
+        allowNull: true,
+        type: Sequelize.STRING,
+      },
+      subscription: {
+        allowNull: true,
+        type: Sequelize.FLOAT,
+        defaultValue: 0,
+      },
+      balance: {
+        allowNull: true,
+        type: Sequelize.FLOAT,
+        defaultValue: 0,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -56,18 +56,111 @@ export class UserController {
 
   static async signup(req: Request, res: Response) {
     try {
-      const { password, firstName, lastName } = req.body;
+      const { password, firstName, lastName, referral } = req.body;
       const hashedPassword = UserAuth.hashPassword(password);
       req.body.password = hashedPassword;
 
+      const referralUser = await UserService.findOne({
+        where: { username: referral },
+      });
+
+      if (!referralUser) delete req.body.referral;
+
       const username = await UserAuth.generateUsername(firstName, lastName);
       req.body.username = username;
-      console.log('usr===', username);
+
       const user = await UserService.create(req.body);
       const message = 'User has been successfull registered';
       delete user.password;
 
-      return ResponseHandler.sendResponse(res, 201, true, message, user);
+      return ResponseHandler.sendResponse(
+        res,
+        STATUS_CODES.CREATED,
+        true,
+        message,
+        user,
+      );
+    } catch (error) {
+      return ResponseHandler.sendErrorResponse(res, error);
+    }
+  }
+
+  static async getProfile(req: Request, res: Response) {
+    try {
+      const { username } = req.params;
+
+      const user = await UserService.findOne({ where: { username } });
+
+      if (!user) {
+        return ResponseHandler.sendResponse(
+          res,
+          STATUS_CODES.NOT_FOUND,
+          false,
+          `User not found`,
+        );
+      }
+
+      const message = 'User has been successfull retrieved';
+      delete user.password;
+
+      return ResponseHandler.sendResponse(
+        res,
+        STATUS_CODES.OK,
+        true,
+        message,
+        user,
+      );
+    } catch (error) {
+      return ResponseHandler.sendErrorResponse(res, error);
+    }
+  }
+
+  static async subscription(req: Request | any, res: Response) {
+    try {
+      const { id } = req.user;
+
+      const user = await UserService.update(
+        { ...req.body },
+        { where: { id }, returning: true },
+      );
+
+      if (!user) {
+        return ResponseHandler.sendResponse(
+          res,
+          STATUS_CODES.NOT_FOUND,
+          false,
+          `User not found`,
+        );
+      }
+
+      // Handle giving user commission
+      if (user.referral) {
+        const commission = req.body.subscription * 0.05;
+
+        const referralUser = await UserService.findOne({
+          where: { username: user.referral },
+        });
+
+        const balance = referralUser.balance + commission;
+        const payload = {
+          balance: balance,
+        };
+        await UserService.update(
+          { ...payload },
+          { where: { id: referralUser?.id }, returning: true },
+        );
+      }
+
+      const message = 'Successfully deposited the sum of money';
+      delete user.password;
+
+      return ResponseHandler.sendResponse(
+        res,
+        STATUS_CODES.OK,
+        true,
+        message,
+        user,
+      );
     } catch (error) {
       return ResponseHandler.sendErrorResponse(res, error);
     }
