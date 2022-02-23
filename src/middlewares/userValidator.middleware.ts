@@ -5,6 +5,7 @@ import { UserService } from '../api/user/user.service';
 import { GeneralValidator } from './generalValidator.middleware';
 import { ResponseHandler } from '../helper/responseHandler.helper';
 import {
+  advertSchema,
   registerUserSchema,
   subscriptionSchema,
 } from '../helper/validationSchema.helper';
@@ -61,5 +62,9 @@ export class UserValidator {
     next: NextFunction,
   ) {
     return GeneralValidator.validator(res, next, req.body, subscriptionSchema);
+  }
+
+  static validateAdvertBody(req: Request, res: Response, next: NextFunction) {
+    return GeneralValidator.validator(res, next, req.body, advertSchema);
   }
 }

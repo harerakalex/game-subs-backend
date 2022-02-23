@@ -11,3 +11,7 @@ export const registerUserSchema = Joi.object({
 export const subscriptionSchema = Joi.object({
   subscription: Joi.number().required(),
 });
+
+export const advertSchema = Joi.object({
+  gameId: Joi.number().integer().required(),
+});

@@ -60,11 +60,14 @@ export class UserController {
       const hashedPassword = UserAuth.hashPassword(password);
       req.body.password = hashedPassword;
 
-      const referralUser = await UserService.findOne({
-        where: { username: referral },
-      });
+      // Check if referall exists
+      if (req.body.referral) {
+        const referralUser = await UserService.findOne({
+          where: { username: referral },
+        });
 
-      if (!referralUser) delete req.body.referral;
+        if (!referralUser) delete req.body.referral;
+      }
 
       const username = await UserAuth.generateUsername(firstName, lastName);
       req.body.username = username;
@@ -135,7 +138,7 @@ export class UserController {
 
       // Handle giving user commission
       if (user.referral) {
-        const commission = req.body.subscription * 0.05;
+        const commission = req.body.subscription * 0.1;
 
         const referralUser = await UserService.findOne({
           where: { username: user.referral },
