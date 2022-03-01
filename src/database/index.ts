@@ -24,3 +24,4 @@ export { database, databaseConnection };
 export { User } from './models/User';
 export { Game } from './models/Game';
 export { Advert } from './models/Advert';
+export { Withdraw } from './models/Withdraw';

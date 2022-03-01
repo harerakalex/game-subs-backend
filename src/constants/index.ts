@@ -9,3 +9,8 @@ export enum STATUS_CODES {
   CONFLICT = 409,
   SERVER_ERROR = 500,
 }
+
+export enum EEmailActions {
+  WELCOME = 'welcome',
+  WITHDRAW = 'withdraw',
+}
