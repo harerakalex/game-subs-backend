@@ -7,14 +7,15 @@ import {
   UpdatedAt,
   Model,
   ForeignKey,
+  DataType,
   BelongsTo,
 } from 'sequelize-typescript';
 
-import { IAdvert } from './interfaces/advert.interface';
+import { IPayment } from './interfaces/payment.interface';
 import { User } from './User';
 
 @Table
-export class Advert extends Model<Advert> implements IAdvert {
+export class Payment extends Model<Payment> implements IPayment {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -24,9 +25,18 @@ export class Advert extends Model<Advert> implements IAdvert {
   @Column
   userId: number;
 
-  @ForeignKey(() => User)
   @Column
-  gameId: number;
+  paymentId: number;
+
+  @Column
+  amount: number;
+
+  @Column({
+    type: DataType.ENUM,
+    values: ['waiting', 'confirmed', 'failed'],
+    defaultValue: 'waiting',
+  })
+  status: string;
 
   @CreatedAt
   @Column

@@ -8,6 +8,7 @@ import {
   Model,
   ForeignKey,
   DataType,
+  BelongsTo,
 } from 'sequelize-typescript';
 
 import { IWithdraw } from './interfaces/withdraw.interface';
@@ -44,4 +45,7 @@ export class Withdraw extends Model<Withdraw> implements IWithdraw {
   @UpdatedAt
   @Column
   updatedAt!: Date;
+
+  @BelongsTo(() => User)
+  user: User;
 }

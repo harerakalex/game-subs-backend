@@ -25,3 +25,4 @@ export { User } from './models/User';
 export { Game } from './models/Game';
 export { Advert } from './models/Advert';
 export { Withdraw } from './models/Withdraw';
+export { Payment } from './models/Payment';

@@ -7,9 +7,13 @@ import {
   UpdatedAt,
   Unique,
   Model,
+  HasMany,
 } from 'sequelize-typescript';
 
 import { IUser } from './interfaces/user.interfaces';
+import { Advert } from './Advert';
+import { Withdraw } from './Withdraw';
+import { Payment } from './Payment';
 
 @Table
 export class User extends Model<User> implements IUser {
@@ -50,4 +54,13 @@ export class User extends Model<User> implements IUser {
   @UpdatedAt
   @Column
   updatedAt!: Date;
+
+  @HasMany(() => Payment)
+  payments: Payment[];
+
+  @HasMany(() => Advert)
+  adverts: Advert[];
+
+  @HasMany(() => Withdraw)
+  withdraws: Withdraw[];
 }
