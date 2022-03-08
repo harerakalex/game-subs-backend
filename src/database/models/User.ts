@@ -14,6 +14,7 @@ import { IUser } from './interfaces/user.interfaces';
 import { Advert } from './Advert';
 import { Withdraw } from './Withdraw';
 import { Payment } from './Payment';
+import { Password } from './Password';
 
 @Table
 export class User extends Model<User> implements IUser {
@@ -63,4 +64,7 @@ export class User extends Model<User> implements IUser {
 
   @HasMany(() => Withdraw)
   withdraws: Withdraw[];
+
+  @HasMany(() => Password)
+  passwords: Password[];
 }

@@ -70,8 +70,21 @@ export class UserAuth {
     return username;
   }
 
-  static generateRandomString = () =>
-    Math.random().toString(36).substring(2, 15);
+  static async generateTemporyPassword() {
+    return this.generateRandomString(6);
+  }
+
+  static generateRandomString(length: number = 5) {
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = ' ';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result.trim();
+  }
 
   static generateRandomNumber = (max: number = 1000) =>
     Math.floor(Math.random() * max) + 1;

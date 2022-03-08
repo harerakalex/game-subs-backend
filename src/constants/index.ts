@@ -13,4 +13,5 @@ export enum STATUS_CODES {
 export enum EEmailActions {
   WELCOME = 'welcome',
   WITHDRAW = 'withdraw',
+  PASSWORD = 'PASSWORD',
 }

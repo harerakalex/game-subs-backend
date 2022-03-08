@@ -26,3 +26,4 @@ export { Game } from './models/Game';
 export { Advert } from './models/Advert';
 export { Withdraw } from './models/Withdraw';
 export { Payment } from './models/Payment';
+export { Password } from './models/Password';

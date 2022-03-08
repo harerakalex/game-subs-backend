@@ -22,3 +22,11 @@ userRouter.put(
   UserValidator.validateSubscriptionBody,
   UserController.subscription,
 );
+
+userRouter.post('/password', UserController.sendPassword);
+
+userRouter.put(
+  '/reset-password',
+  UserValidator.verifyToken,
+  UserController.resetPassword,
+);
