@@ -7,7 +7,6 @@ import { UserAuth } from '../../helper/user.helper';
 import { IUser } from '../../database/models/interfaces/user.interfaces';
 import { ResponseHandler } from '../../helper/responseHandler.helper';
 import { STATUS_CODES, EEmailActions } from '../../constants';
-import { IPassword } from '../../database/models/interfaces/password.interface';
 import sendEmail from '../../helper/mailer';
 
 export class UserController {
@@ -116,6 +115,8 @@ export class UserController {
       const user = await UserService.create(req.body);
       const message = 'User has been successfull registered';
       delete user.password;
+
+      await sendEmail(EEmailActions.WELCOME, user.email);
 
       return ResponseHandler.sendResponse(
         res,
@@ -235,7 +236,7 @@ export class UserController {
 
       const createPwd = await PasswordService.create(payload);
 
-      // await sendEmail(EEmailActions.PASSWORD, user.email, password);
+      await sendEmail(EEmailActions.PASSWORD, user.email, password);
 
       const message = 'Successfully sent temporary password';
 

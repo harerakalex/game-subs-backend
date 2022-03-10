@@ -11,6 +11,7 @@ import {
 } from '../helper/validationSchema.helper';
 import { IUser } from '../database/models/interfaces/user.interfaces';
 import { environment } from '../config/environment';
+import MailChecker from 'deep-email-validator';
 
 export class UserValidator {
   static validateUserBody(req: Request, res: Response, next: NextFunction) {
@@ -66,5 +67,16 @@ export class UserValidator {
 
   static validateAdvertBody(req: Request, res: Response, next: NextFunction) {
     return GeneralValidator.validator(res, next, req.body, advertSchema);
+  }
+
+  static async emailChecker(req: Request, res: Response, next: NextFunction) {
+    const { email } = req.body;
+    const response = await MailChecker(email);
+    const message = `This email seems to be invalid, please check the spelling`;
+    if (response.valid === false) {
+      return ResponseHandler.sendResponse(res, 404, false, message);
+    }
+
+    return next();
   }
 }

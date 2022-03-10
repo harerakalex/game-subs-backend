@@ -27,7 +27,7 @@ export class WithdrawController {
         { where: { id }, returning: true },
       );
 
-      // await sendEmail(EEmailActions.WITHDRAW, user.email);
+      await sendEmail(EEmailActions.WITHDRAW, user.email);
 
       const message = 'withdrawn successfully';
 

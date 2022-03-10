@@ -11,6 +11,7 @@ userRouter.post(
   '/signup',
   UserValidator.validateUserBody,
   UserValidator.validateUserExists,
+  UserValidator.emailChecker,
   UserController.signup,
 );
 
