@@ -18,8 +18,7 @@ userRouter.post(
 userRouter.get('/:username', UserController.getProfile);
 
 userRouter.put(
-  '/deposit',
-  UserValidator.verifyToken,
+  '/deposit/:username',
   UserValidator.validateSubscriptionBody,
   UserController.subscription,
 );

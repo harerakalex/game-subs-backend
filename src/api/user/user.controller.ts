@@ -162,11 +162,11 @@ export class UserController {
 
   static async subscription(req: Request | any, res: Response) {
     try {
-      const { id } = req.user;
+      const { username } = req.params;
 
       const user = await UserService.update(
         { ...req.body },
-        { where: { id }, returning: true },
+        { where: { username }, returning: true },
       );
 
       if (!user) {
