@@ -14,7 +14,8 @@ const sendEmail = async (action: EEmailActions, to: string, data: any = '') => {
       from: environment.emailSender,
       subject: 'Welcome to Diver Adz',
       html: `<h2>Congratulations on your account!</h2>
-        <p style="font-size: 1rem;">Start making profit by advertising.</p>`,
+        <p style="font-size: 1rem;">Your registration has been approved. Diver adz  is a great way for making money..</p>
+        `,
     };
 
     return mailer.send(message);
