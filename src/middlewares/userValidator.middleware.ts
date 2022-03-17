@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 
 import { UserService } from '../api/user/user.service';
+import { AdvertService } from '../api/Advert/advert.service';
 import { GeneralValidator } from './generalValidator.middleware';
 import { ResponseHandler } from '../helper/responseHandler.helper';
 import {
@@ -27,7 +29,7 @@ export class UserValidator {
     const message = `The user with email: '${email}' already exists`;
     const userExists = await UserService.findOne({ where: { email } });
     if (userExists) {
-      return ResponseHandler.sendResponse(res, 404, false, message);
+      return ResponseHandler.sendResponse(res, 409, false, message);
     }
 
     return next();
@@ -75,6 +77,37 @@ export class UserValidator {
     const message = `This email seems to be invalid, please check the spelling`;
     if (response.valid === false) {
       return ResponseHandler.sendResponse(res, 404, false, message);
+    }
+
+    return next();
+  }
+
+  static async validateIfGameIsAdvertized(
+    req: Request | any,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const { id } = req.user;
+    const { gameId } = req.body;
+
+    const TODAY_START = new Date().setHours(0, 0, 0, 0);
+    const NOW = new Date();
+    const message = `This game is already advertized`;
+    const advertized = await AdvertService.findOne({
+      where: {
+        [Op.and]: {
+          userId: id,
+          gameId,
+          createdAt: {
+            [Op.gt]: TODAY_START,
+            [Op.lt]: NOW,
+          },
+        },
+      },
+    });
+
+    if (advertized) {
+      return ResponseHandler.sendResponse(res, 409, false, message);
     }
 
     return next();

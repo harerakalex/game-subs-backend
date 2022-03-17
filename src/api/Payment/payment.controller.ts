@@ -70,15 +70,10 @@ export class PaymentController {
     try {
       const { paymentId } = req.params;
 
-      const statusPayload = {
-        status: 'confirmed',
-      };
-      const updatePaymentStatus = await PaymentService.update(
-        { ...statusPayload },
-        { where: { paymentId }, returning: true },
-      );
-
-      if (!updatePaymentStatus) {
+      const findPayment = await PaymentService.findOne({
+        where: { paymentId },
+      });
+      if (!findPayment) {
         return ResponseHandler.sendResponse(
           res,
           STATUS_CODES.NOT_FOUND,
@@ -86,6 +81,23 @@ export class PaymentController {
           `Payment not found`,
         );
       }
+
+      if (findPayment.status === 'confirmed') {
+        return ResponseHandler.sendResponse(
+          res,
+          STATUS_CODES.CONFLICT,
+          false,
+          `Payment already confirmed`,
+        );
+      }
+
+      const statusPayload = {
+        status: 'confirmed',
+      };
+      const updatePaymentStatus = await PaymentService.update(
+        { ...statusPayload },
+        { where: { paymentId }, returning: true },
+      );
 
       const user = await UserService.findOne({
         where: { id: updatePaymentStatus.userId },
@@ -95,7 +107,7 @@ export class PaymentController {
         subscription: updatePaymentStatus.amount + user.subscription,
       };
 
-      await UserService.update(
+      const updateUserSubscription = await UserService.update(
         { ...userPayload },
         { where: { id: updatePaymentStatus.userId }, returning: true },
       );
@@ -103,18 +115,18 @@ export class PaymentController {
       const findAllPayments = await PaymentService.findAll({
         where: {
           [Op.and]: {
-            userId: user.id,
-            status: 'confirmed'
-          }
-        }
+            userId: updatePaymentStatus.userId,
+            status: 'confirmed',
+          },
+        },
       });
 
       // Handle giving user commission
-      if (user.referral && findAllPayments.length === 1) {
-        const commission = user.subscription * 0.1;
+      if (updateUserSubscription.referral && findAllPayments.length === 1) {
+        const commission = updateUserSubscription.subscription * 0.1;
 
         const referralUser = await UserService.findOne({
-          where: { username: user.referral },
+          where: { username: updateUserSubscription.referral },
         });
 
         const balance = referralUser.balance + commission;

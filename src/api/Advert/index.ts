@@ -9,6 +9,7 @@ advertRouter.post(
   '/',
   UserValidator.verifyToken,
   UserValidator.validateAdvertBody,
+  UserValidator.validateIfGameIsAdvertized,
   AdvertController.advertiseGame,
 );
 
