@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 
 import { PaymentService } from './payment.service';
 import { ResponseHandler } from '../../helper/responseHandler.helper';
@@ -98,6 +99,33 @@ export class PaymentController {
         { ...userPayload },
         { where: { id: updatePaymentStatus.userId }, returning: true },
       );
+
+      const findAllPayments = await PaymentService.findAll({
+        where: {
+          [Op.and]: {
+            userId: user.id,
+            status: 'confirmed'
+          }
+        }
+      });
+
+      // Handle giving user commission
+      if (user.referral && findAllPayments.length === 1) {
+        const commission = user.subscription * 0.1;
+
+        const referralUser = await UserService.findOne({
+          where: { username: user.referral },
+        });
+
+        const balance = referralUser.balance + commission;
+        const payload = {
+          balance: balance,
+        };
+        await UserService.update(
+          { ...payload },
+          { where: { id: referralUser?.id }, returning: true },
+        );
+      }
 
       const message = 'Payments has been updated successfully';
 
