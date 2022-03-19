@@ -41,7 +41,7 @@ export class PaymentController {
       } = environment;
 
       const encodeCBURL = encodeURIComponent(
-        `${backendUrl}/api/v1/payment/deposit/callback?paymentId=${
+        `${backendUrl}/payment/deposit/callback?paymentId=${
           payment.paymentId
         }&secret=${new Date().getTime()}`,
       );
