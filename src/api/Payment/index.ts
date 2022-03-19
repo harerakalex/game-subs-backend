@@ -13,7 +13,7 @@ paymentRouter.post(
 
 paymentRouter.get('/:userId', PaymentController.getUserPayments);
 
-paymentRouter.put(
-  '/status/:paymentId',
+paymentRouter.get(
+  '/deposit/callback',
   PaymentController.updateUserPaymentStatus,
 );

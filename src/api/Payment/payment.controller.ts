@@ -1,15 +1,34 @@
 import { Request, Response } from 'express';
-import { Op } from 'sequelize';
 
 import { PaymentService } from './payment.service';
 import { ResponseHandler } from '../../helper/responseHandler.helper';
 import { STATUS_CODES } from '../../constants';
 import { User } from '../../database';
 import { UserService } from '../../api/user/user.service';
+import { UserAuth } from '../../helper/user.helper';
+import { IPayment } from '../../database/models/interfaces/payment.interface';
 
 export class PaymentController {
   static async createPayment(req: Request | any, res: Response) {
     try {
+      let findPayment: IPayment;
+      let paymentId: string;
+      paymentId = `${new Date().getTime()}${UserAuth.generateRandomNumber(
+        10000,
+      )}`;
+
+      findPayment = await PaymentService.findOne({ where: { paymentId } });
+
+      while (findPayment) {
+        paymentId = `${new Date().getTime()}${UserAuth.generateRandomNumber(
+          10000,
+        )}`;
+
+        findPayment = await PaymentService.findOne({ where: { paymentId } });
+      }
+
+      req.body.paymentId = paymentId;
+
       const payment = await PaymentService.create(req.body);
 
       const message = 'Paid successfully';
@@ -65,10 +84,11 @@ export class PaymentController {
     }
   }
 
-  //   This return user payments
+  //  This is just our callback.
   static async updateUserPaymentStatus(req: Request | any, res: Response) {
     try {
-      const { paymentId } = req.params;
+      const paymentId = req.query.paymentId;
+      const value = parseFloat(req.query.value as string);
 
       const findPayment = await PaymentService.findOne({
         where: { paymentId },
@@ -93,6 +113,7 @@ export class PaymentController {
 
       const statusPayload = {
         status: 'confirmed',
+        amount: value,
       };
       const updatePaymentStatus = await PaymentService.update(
         { ...statusPayload },
@@ -112,18 +133,9 @@ export class PaymentController {
         { where: { id: updatePaymentStatus.userId }, returning: true },
       );
 
-      const findAllPayments = await PaymentService.findAll({
-        where: {
-          [Op.and]: {
-            userId: updatePaymentStatus.userId,
-            status: 'confirmed',
-          },
-        },
-      });
-
       // Handle giving user commission
-      if (updateUserSubscription.referral && findAllPayments.length === 1) {
-        const commission = updateUserSubscription.subscription * 0.1;
+      if (updateUserSubscription.referral) {
+        const commission = value * 0.1;
 
         const referralUser = await UserService.findOne({
           where: { username: updateUserSubscription.referral },
