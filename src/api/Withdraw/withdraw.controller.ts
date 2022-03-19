@@ -46,11 +46,22 @@ export class WithdrawController {
   //   This return user debit.
   static async getUserWithdraw(req: Request | any, res: Response) {
     try {
-      const { id } = req.user;
+      const { username } = req.params;
+
+      const findUser = await UserService.findOne({ where: { username } });
+
+      if (!findUser) {
+        return ResponseHandler.sendResponse(
+          res,
+          STATUS_CODES.NOT_FOUND,
+          false,
+          `User does not exist`,
+        );
+      }
 
       const debits = await WithdrawService.findAll({
         where: {
-          userId: id,
+          userId: findUser.id,
         },
         include: [{ model: User }],
       });

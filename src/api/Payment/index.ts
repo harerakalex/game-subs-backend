@@ -11,7 +11,7 @@ paymentRouter.post(
   PaymentController.createPayment,
 );
 
-paymentRouter.get('/:userId', PaymentController.getUserPayments);
+paymentRouter.get('/:username', PaymentController.getUserPayments);
 
 paymentRouter.get(
   '/deposit/callback',

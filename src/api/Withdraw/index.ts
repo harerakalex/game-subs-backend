@@ -11,8 +11,4 @@ withdrawRouter.post(
   WithdrawController.withdraw,
 );
 
-withdrawRouter.get(
-  '/',
-  UserValidator.verifyToken,
-  WithdrawController.getUserWithdraw,
-);
+withdrawRouter.get('/user/:username', WithdrawController.getUserWithdraw);

@@ -18,7 +18,7 @@ export class AdvertController {
       // Find and Give the income
       const user = await UserService.findOne({ where: { id } });
       const income = getDailyIncome(user.subscription);
-      const balance = user.balance + income;
+      const balance = user.balance + parseFloat(income.toFixed(3));
       const payload = {
         balance: balance,
       };

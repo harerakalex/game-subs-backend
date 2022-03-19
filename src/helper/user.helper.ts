@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 
 import { environment } from '../config/environment';
 import { IUser } from '../database/models/interfaces/user.interfaces';
@@ -88,4 +89,11 @@ export class UserAuth {
 
   static generateRandomNumber = (max: number = 1000) =>
     Math.floor(Math.random() * max) + 1;
+
+  static async convertBtcToUsd(btc: number) {
+    const exchangeRate = await axios.get('https://blockchain.info/ticker');
+
+    const convert = btc * exchangeRate.data.USD.last;
+    return parseFloat(convert.toFixed(3));
+  }
 }
