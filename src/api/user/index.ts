@@ -11,11 +11,19 @@ userRouter.post(
   '/signup',
   UserValidator.validateUserBody,
   UserValidator.validateUserExists,
+  UserValidator.validateIfReferralExists,
   UserValidator.emailChecker,
   UserController.signup,
 );
 
 userRouter.get('/:username', UserController.getProfile);
+
+// Update profile
+userRouter.put(
+  '/:username',
+  UserValidator.validateUpdateUserBody,
+  UserController.UpdateProfile,
+);
 
 userRouter.put(
   '/deposit/:username',

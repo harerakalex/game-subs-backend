@@ -276,4 +276,37 @@ export class UserController {
       return ResponseHandler.sendErrorResponse(res, error);
     }
   }
+
+  static async UpdateProfile(req: Request, res: Response) {
+    try {
+      const { username } = req.params;
+
+      const user = await UserService.update(
+        { ...req.body },
+        { where: { username }, returning: true },
+      );
+
+      if (!user) {
+        return ResponseHandler.sendResponse(
+          res,
+          STATUS_CODES.NOT_FOUND,
+          false,
+          `User not found`,
+        );
+      }
+
+      const message = 'User profile updated successfully';
+      delete user.password;
+
+      return ResponseHandler.sendResponse(
+        res,
+        STATUS_CODES.OK,
+        true,
+        message,
+        user,
+      );
+    } catch (error) {
+      return ResponseHandler.sendErrorResponse(res, error);
+    }
+  }
 }

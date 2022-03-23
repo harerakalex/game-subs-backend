@@ -10,6 +10,7 @@ import {
   advertSchema,
   registerUserSchema,
   subscriptionSchema,
+  UpdateUserSchema,
 } from '../helper/validationSchema.helper';
 import { IUser } from '../database/models/interfaces/user.interfaces';
 import { environment } from '../config/environment';
@@ -18,6 +19,14 @@ import MailChecker from 'deep-email-validator';
 export class UserValidator {
   static validateUserBody(req: Request, res: Response, next: NextFunction) {
     return GeneralValidator.validator(res, next, req.body, registerUserSchema);
+  }
+
+  static validateUpdateUserBody(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    return GeneralValidator.validator(res, next, req.body, UpdateUserSchema);
   }
 
   static async validateUserExists(
@@ -108,6 +117,24 @@ export class UserValidator {
 
     if (advertized) {
       return ResponseHandler.sendResponse(res, 409, false, message);
+    }
+
+    return next();
+  }
+
+  // Validate referral
+  static async validateIfReferralExists(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const { referral } = req.body;
+    const message = `Invalid referral code, Please ask the referral code from the person who referred you.`;
+    const userExists = await UserService.findOne({
+      where: { username: referral },
+    });
+    if (!userExists) {
+      return ResponseHandler.sendResponse(res, 404, false, message);
     }
 
     return next();
