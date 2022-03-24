@@ -79,4 +79,40 @@ export class WithdrawController {
       return ResponseHandler.sendErrorResponse(res, error);
     }
   }
+
+  static async updateWithdraw(req: Request, res: Response) {
+    try {
+      const { id, status } = req.params;
+
+      const payload = {
+        state: status,
+      };
+
+      const updateWithdraw = await WithdrawService.update(
+        { ...payload },
+        { where: { id }, returning: true },
+      );
+
+      if (!updateWithdraw) {
+        return ResponseHandler.sendResponse(
+          res,
+          STATUS_CODES.NOT_FOUND,
+          false,
+          `Withdraw does not exist`,
+        );
+      }
+
+      const message = 'Withdraw status has been updated successfully';
+
+      return ResponseHandler.sendResponse(
+        res,
+        STATUS_CODES.OK,
+        true,
+        message,
+        updateWithdraw,
+      );
+    } catch (error) {
+      return ResponseHandler.sendErrorResponse(res, error);
+    }
+  }
 }

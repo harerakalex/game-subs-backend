@@ -41,6 +41,20 @@ export class AdminController {
       const { data, pageMeta } = await PaginatorHelper.getPaginated(Payment, {
         defaultOptions: {
           order: [['createdAt', 'DESC']],
+          include: [
+            {
+              model: User,
+              attributes: [
+                'id',
+                'firstName',
+                'lastName',
+                'username',
+                'email',
+                'balance',
+                'subscription',
+              ],
+            },
+          ],
         },
         limit,
         page,
@@ -65,6 +79,20 @@ export class AdminController {
       const { data, pageMeta } = await PaginatorHelper.getPaginated(Withdraw, {
         defaultOptions: {
           order: [['createdAt', 'DESC']],
+          include: [
+            {
+              model: User,
+              attributes: [
+                'id',
+                'firstName',
+                'lastName',
+                'username',
+                'email',
+                'balance',
+                'subscription',
+              ],
+            },
+          ],
         },
         limit,
         page,

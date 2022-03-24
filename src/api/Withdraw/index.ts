@@ -12,3 +12,8 @@ withdrawRouter.post(
 );
 
 withdrawRouter.get('/user/:username', WithdrawController.getUserWithdraw);
+
+withdrawRouter.put(
+  '/user/:id/status/:status',
+  WithdrawController.updateWithdraw,
+);
